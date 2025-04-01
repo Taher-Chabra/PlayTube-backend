@@ -14,5 +14,10 @@
   "description": "Backend code for a complex web application",
   "devDependencies": {
     "prettier": "^3.5.3"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^5.1.0",
+    "mongoose": "^8.13.1"
   }
 }
