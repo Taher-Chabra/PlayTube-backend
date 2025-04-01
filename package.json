@@ -11,5 +11,8 @@
   "keywords": [],
   "author": "Taher Chabra",
   "license": "ISC",
-  "description": "Backend code for a complex web application"
+  "description": "Backend code for a complex web application",
+  "devDependencies": {
+    "prettier": "^3.5.3"
+  }
 }
