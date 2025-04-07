@@ -51,14 +51,14 @@ userSchema.pre('save', async function(next) {
    const user = this;
 
    try {
-      if (user.isModified('password')) {
-         const salt = await bcrypt.genSalt(10);
-         const hashedPassword = await bcrypt.hash(user.password, salt);
-         user.password = hashedPassword;
-      } else {
-         next();
-      }
+      if (!user.isModified('password')) return next();
+
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(user.password, salt);
+      user.password = hashedPassword;
+      next();
    } catch (error) {
+      console.error("Error hashing password:", error);
       next(error);
    }
 });
