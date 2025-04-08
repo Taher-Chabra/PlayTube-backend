@@ -9,6 +9,8 @@ cloudinary.config({
    api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
+// Upload file to Cloudinary
+
 const uploadOnCloudinary = async (filePath) => {
    try {
       if (!filePath) return null;
@@ -29,4 +31,23 @@ const uploadOnCloudinary = async (filePath) => {
    }
 }
 
-export { uploadOnCloudinary };
+// Delete file from Cloudinary
+
+const deleteFromCloudinary = async (publicId) => {
+   try {
+      if (!publicId) return null;
+
+      // Delete the file from Cloudinary
+      const deleteResult = await cloudinary.uploader.destroy(publicId, {
+         resource_type: "auto"
+      });
+
+      return deleteResult;
+   } catch (error) {
+      console.error("Error deleting Image from Cloudinary:", error);
+      return null;
+   }
+}
+
+
+export { uploadOnCloudinary, deleteFromCloudinary };
