@@ -70,7 +70,7 @@ userSchema.methods.comparePassword = async function(enteredPassword) {
 userSchema.methods.generateAccessToken = function() {
    const payload = {
       _id: this._id,
-      emai: this.username,
+      email: this.email,
       userame: this.username,
       fullName: this.fullName,
    }
