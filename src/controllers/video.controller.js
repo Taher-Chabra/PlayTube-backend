@@ -16,7 +16,7 @@ const getAllVideos = asyncHandler(async (req, res) => {
   const matchStage = { isPublished: true };
 
   if (isValidObjectId(userId)) {
-    matchStage.owner = mongoose.Types.ObjectId(userId);
+    matchStage.owner = new mongoose.Types.ObjectId(userId);
   }
 
   if (query) {
@@ -148,7 +148,7 @@ const getVideoById = asyncHandler(async (req, res) => {
   const video = await Video.aggregate([
     {
       $match: {
-        _id: mongoose.Types.ObjectId(videoId),
+        _id: new mongoose.Types.ObjectId(videoId),
         isPublished: true,
       },
     },

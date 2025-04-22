@@ -99,9 +99,9 @@ const loginUser = asyncHandler(async (req, res) => {
       throw new ApiError(400, "Email or username is required");
    }
 
-   const user = await User.findOne({
-      $or: [{ username }, { email }]
-   })
+   const user = await User.findOne(
+      { $or: [{ username }, { email }] }
+   );
 
    if (!user) {
       throw new ApiError(404, "User does not exist");
@@ -114,10 +114,10 @@ const loginUser = asyncHandler(async (req, res) => {
    }
 
    const {accessToken, refreshToken} = await generateAccessAndRefreshToken(user._id);
-   console.log("accessToken", accessToken);
-   console.log("refreshToken", refreshToken);
 
-   const loggedInUser = await User.findById(user._id).select("-password -refreshToken");
+   const loggedInUser = await User
+      .findById(user._id)
+      .select("-password -refreshToken");
 
    const options = {
       httpOnly: true,
@@ -166,10 +166,10 @@ const logoutUser = asyncHandler(async (req, res) => {
       .json(new ApiResponse(200, {}, "User logged out successfully"));
 });
 
-// Refresh access token if it is expired and refresh token is valid
+// Refresh access token if it is expired or used
 
 const refreshAccessToken = asyncHandler(async (req, res) => {
-   const incomingRefreshToken = req.cookies?.refreshToken || req.body?.refreshToken
+   const incomingRefreshToken = req.cookies?.refreshToken || req.body?.refreshToken;
 
    if (!incomingRefreshToken) {
       throw new ApiError(401, "Unauthorized request");
@@ -178,7 +178,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
    try {
       const decodedToken = jwt.verify(
          incomingRefreshToken,
-         process.env.REFRESH_TOKEN_SECRET,  
+         process.env.REFRESH_TOKEN_SECRET,
       )
    
       const user = await User.findById(decodedToken?._id)
@@ -221,7 +221,7 @@ const changeCurrentPassword = asyncHandler(async (req, res) => {
    const { oldPassword, newPassword } = req.body
 
    const user = await User.findById(req.user?._id)
-   const isPasswordCorrect = await user.isPasswordCorrect(oldPassword);
+   const isPasswordCorrect = await user.comparePassword(oldPassword);
 
    if (!isPasswordCorrect) {
       throw new ApiError(400, "Invalid password");
@@ -380,7 +380,7 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
       },
       {
          $addFields: {
-            subcribersCount: {
+            subscribersCount: {
                $size: "$subscribers"
             },
             channelsSubscribedToCount: {
@@ -399,7 +399,7 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
          $project: {
             fullName: 1,
             username: 1,
-            subcribersCount: 1,
+            subscribersCount: 1,
             channelsSubscribedToCount: 1,
             isSubscribed: 1,
             avatar: 1,
@@ -408,7 +408,7 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
          }
       }
    ])
-
+   console.log(channel);
    if (!channel?.length) {
       throw new ApiError(404, "Channel does not exist");
    }
@@ -422,7 +422,7 @@ const getWatchHistory = asyncHandler(async (req, res) => {
    const user = await User.aggregate([
       {
          $match: {
-            _id: mongoose.Types.ObjectId(req.user._id)
+            _id: new mongoose.Types.ObjectId(req.user._id)
          }
       },
       {
