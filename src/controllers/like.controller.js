@@ -149,7 +149,7 @@ const getLikedVideos = asyncHandler(async (req, res) => {
       likedBy: req.user._id,
    }).populate("contentId");
 
-   if (!likedVideos) {
+   if (likedVideos.length === 0) {
       throw new ApiError(404, "No liked videos found")
    }
 
@@ -166,7 +166,7 @@ const getLikedTweets = asyncHandler(async (req, res) => {
       likedBy: req.user._id,
    }).populate("contentId");
 
-   if (!likedTweets) {
+   if (likedTweets.length === 0) {
       throw new ApiError(404, "No liked tweets found")
    }
 
