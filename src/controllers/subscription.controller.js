@@ -4,14 +4,13 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 
+// toggle subscription (subscribe/unsubscribe)
+
 const toggleSubscription = asyncHandler(async (req, res) => {
   const { channelId } = req.params;
 
-  if (!channelId) {
-    throw new ApiError(400, "Channel id is required");
-  }
-  if (!isValidObjectId(channelId)) {
-    throw new ApiError(400, "Invalid channel id");
+  if (!channelId || !isValidObjectId(channelId)) {
+    throw new ApiError(400, "Invalid or missing channel ID");
   }
 
    const existingSubscription = await Subscription.findOne({
@@ -43,11 +42,8 @@ const toggleSubscription = asyncHandler(async (req, res) => {
 const getUserChannelSubscribers = asyncHandler(async (req, res) => {
   const { channelId } = req.params;
 
-  if (!channelId) {
-    throw new ApiError(400, "Channel id is required");
-  }
-  if (!isValidObjectId(channelId)) {
-    throw new ApiError(400, "Invalid channel id");
+  if (!channelId || !isValidObjectId(channelId)) {
+    throw new ApiError(400, "Invalid or missing channel ID");
   }
 
   const susbcribers = await Subscription.aggregate([
@@ -99,11 +95,8 @@ const getUserChannelSubscribers = asyncHandler(async (req, res) => {
 const getSubscribedChannels = asyncHandler(async (req, res) => {
   const { subscriberId } = req.params;
 
-  if (!subscriberId) {
-    throw new ApiError(400, "Subscriber id is required");
-  }
-  if (!isValidObjectId(subscriberId)) {
-    throw new ApiError(400, "Invalid subscriber id");
+  if (!subscriberId || !isValidObjectId(subscriberId)) {
+    throw new ApiError(400, "Invalid or missing subscriber ID");
   }
 
   const subscribedChannels = await Subscription.aggregate([
@@ -154,4 +147,8 @@ const getSubscribedChannels = asyncHandler(async (req, res) => {
     );
 });
 
-export { toggleSubscription, getUserChannelSubscribers, getSubscribedChannels };
+export {
+   toggleSubscription, 
+   getUserChannelSubscribers, 
+   getSubscribedChannels 
+  };
